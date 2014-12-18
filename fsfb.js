@@ -62,7 +62,7 @@ var feedback = function (type, fname, dirname) {
     enableLog && console.log("will to exec : %s ",callback);
     exec(callback, function (err, out, errout) {
         if (err) {
-            console.errir(err.stack);
+            console.error(err.stack);
         }
 
         out && process.stdout.write(out);
