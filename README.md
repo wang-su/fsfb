@@ -13,15 +13,19 @@
 1. fsfb help - 显示帮助信息
 	
 	
-2. fsfb dirname commandTemplate [ --enable-log ]
+2. fsfb dirname commandTemplate [ --exec | --exec-tpl-file ] [ --enable-log ] [ --version ]
 
 		Params :
 
 		dirname - 将进行监视的目录名
 
-		commandTemplate - 包含替换标记的命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.
-
 		--enable-log  显示一些调式信息.大部份情况下没用.
+		
+		--exec 指定命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.
+		
+		--exec-tpl-file 从文件读取命令行模版, *考虑性能问题, 在启动监视后,不再读取tpl-file文件变化.
+		
+		--version 显示版本信息
 
 ### 支持的替换标记 : {xxx}
 
@@ -52,5 +56,6 @@
 	newfile : ./target/qqq asdf.js, /Users/baidu/git/fsfb/target/qqq, /Users/baidu/git/fsfb/target/qqq/asdf.js
 	newfile : ./target/qqq asdf.js, /Users/baidu/git/fsfb/target/qqq, /Users/baidu/git/fsfb/target/qqq/asdf.js
 	rmfile : ./target/qqq asdf.js, /Users/baidu/git/fsfb/target/qqq, /Users/baidu/git/fsfb/target/qqq/asdf.js
+
 
 
