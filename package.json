@@ -1,6 +1,6 @@
 {
   "name": "fsfb",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "file system feedback : watch files change and execute a command",
   "main": "common/observer.js",
   "bin": {
