@@ -1,0 +1,16 @@
+{
+  "name": "fsfb",
+  "version": "0.0.0",
+  "description": "file system feedback : watch files change and execute a command",
+  "main": "common/observer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sync"
+  ],
+  "author": "wangsu01@baidu.com",
+  "license": "MIT",
+  "dependencies": {
+  }
+}
