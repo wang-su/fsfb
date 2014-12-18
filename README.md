@@ -13,7 +13,7 @@
 1. fsfb help - 显示帮助信息
 	
 	
-2. fsfb dirname commandTemplate [ --exec | --exec-tpl-file ] [ --enable-log ] [ --version ]
+2. fsfb dirname [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]
 
 		Params :
 
@@ -24,6 +24,8 @@
 		--exec 指定命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.
 		
 		--exec-tpl-file 从文件读取命令行模版, *考虑性能问题, 在启动监视后,不再读取tpl-file文件变化.
+		
+		--charset 指定tpl-file的文件编码,默认为utf-8
 		
 		--version 显示版本信息
 
@@ -45,7 +47,7 @@
 ## Demo
 
 
-	> fsfb ./target "echo {type} : {dirname} {fname}, {fulldir}, {fullname}"
+	> fsfb ./target --exec="echo {type} : {dirname} {fname}, {fulldir}, {fullname}"
 	
 
 	 Welecom to use the fs_feedback. 
