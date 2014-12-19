@@ -1,6 +1,6 @@
 
 
-# FSFB - (File System Feed Fack)
+# FSFB - (File System FeedBack)
 
 
 使用nodejs开发的一个小工具, 用于监测文件系统变化并执行一个命令行命令

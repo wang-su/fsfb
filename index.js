@@ -138,13 +138,18 @@ function help () {
  */
 function version () {
     
-    var versionInfo = "%s version : %s [%s]\n -- %s\n" + 
+    var versionInfo = "%s [%s] version : %s \n -- %s\n" + 
     "------------------------------------------\n" + 
     "Author : %s,\nWebSite : %s\n";
     
-    console.log(versionInfo, packageInfo.name, packageInfo.version, 
-            packageInfo.license, packageInfo.description, packageInfo.author, 
-            packageInfo.homepage);
+    var author = packageInfo.author;
+    
+    if(typeof(author) == 'object'){
+        author = author.name;
+    }
+    
+    console.log(versionInfo, packageInfo.name,  packageInfo.license, packageInfo.version, 
+            packageInfo.description, author, packageInfo.homepage);
 }
 
 /**
