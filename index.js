@@ -24,14 +24,21 @@ args = args.slice(2);
 var dirname = null;
 
 if(args.length >= 2){
-    //取目标目录, 否则为单参数
-    dirname = args.shift();     
+    // 第一个参数不存在'='时,认为第一个参数为目录名
+    if(args[0].indexOf("=") == -1){
+        //取目标目录, 否则为单参数
+        dirname = args.shift();     
+    }
 }
 
 var enableLog = false;
 var charset = 'utf-8';
 var execTpl = '';
 var execTplFile = '';
+var busyIgnore = false;
+
+// 是否正在执行中
+var working = false;    
 
 var shellTpl = "echo {type}:{fullname}";
 
@@ -48,6 +55,12 @@ while(paramItem = args.pop()){
     key = key.toLowerCase();
     
     switch(key){
+        case '--target':
+            dirname = value || false;
+            break;
+        case '--busy-ignore':
+            busyIgnore = true;
+            break;
         case '--enable-log':
             // 启用log
             enableLog = true;
@@ -111,10 +124,12 @@ if(execTplFile){
  */
 function help () {
 
-    var info = '\nUsage : fsfb dirname [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]';
+    var info = '\nUsage : fsfb dirname|--target="dirname" [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]';
     info += '\n\nParams :';
     info += '\n\tdirname - 将进行监视的目录名';
     info += '\n\t--enable-log - 显示一些调式信息.大部份情况下没用.';
+    info += '\n\t--target - 将进行监视的目录名';
+    info += '\n\t--busy-ignore - 当一次执行未完成时,忽略后续的执行请求.';
     info += '\n\t--exec - 指定命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.';
     info += '\n\t--exec-tpl-file - 从文件读取命令行模版, *考虑性能问题, 在启动监视后,不再读取tpl-file文件变化.';
     info += '\n\t--charset - 指定tpl-file的文件编码,默认为utf-8';
@@ -164,6 +179,13 @@ function start(tplContent){
     
     var feedback = function (type, fname, dirname) {
         
+        if(busyIgnore === true && working !== false){
+            enableLog && console.log("ignore execute at : %s, the last execution at: $s;",Date.now(),  working);
+            return false;
+        }
+        
+        working = Date.now();
+        
         var callback = tplContent.replace(/\{(.*?)\}/g, function (match, p1, index) {
             
             //type, fname, dirname, fulldir, fullname 
@@ -185,12 +207,18 @@ function start(tplContent){
         enableLog && console.log("will to exec : %s ",callback);
         
         exec(callback, function (err, out, errout) {
-            if (err) {
-                console.error(err.stack);
+            try{
+                if (err) {
+                    console.error(err.stack);
+                }
+                
+                out && process.stdout.write(out);
+                errout && process.stderr.write(errout);
+            }finally{
+                // 只有当--busy-ignore打开时,才有可能统计执行时间, 否则working有可能被反复覆盖.
+                enableLog && busyIgnore && console.log("cost time : %s ms. ", Date.now() - working);
+                working = false;
             }
-            
-            out && process.stdout.write(out);
-            errout && process.stderr.write(errout);
         });
     };
     

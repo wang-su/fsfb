@@ -9,6 +9,21 @@
 
 > 在最初的开发过程中,本来的目的是想实现一个自动实时的文件同步工具. 将一些目录内容实时同步到远端的服务器和开发机上. 但考虑使用scp和rsync的条件下, 唯一需要的就是监测文件变化. 并产生一个通知. 于是便在设计上进行了终级简化. 最终变为现在这个小的命令行工具. 用于配合rsync,scp等标准命令行工具使用.
 
+## Change log
+
+* Version 0.0.1 ~ 0.0.6
+
+  fix bug
+
+* Version 0.0.7 
+    
+   添加 --target 参数用于明确指定需要监视的目录名.
+   
+   添加 --busy-ignore 参数用于解决一些文件变动间隔时间过短而处理时间较长而造成的处理堆叠问题.
+   
+   
+----------
+
 
 ## Install
 	
@@ -19,12 +34,16 @@
 1. fsfb help - 显示帮助信息
 	
 	
-2. fsfb dirname [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]
+2. fsfb "dirname" | --target="dirname" [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]
 
 		Params :
 
-		dirname - 将进行监视的目录名
-
+		dirname - 将进行监视的目录名,当第一个参数未指定参数名时, 认为是target,如果后面指定了--target将会被覆盖.
+		
+		--target - 将进行监视的目录名. (>= v_0.0.7)
+		
+		--busy-ignore - 当一次执行未完成时,忽略后续的执行请求. (>= v_0.0.7)
+		
 		--enable-log  显示一些调式信息.大部份情况下没用.
 		
 		--exec 指定命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.
@@ -34,6 +53,10 @@
 		--charset 指定tpl-file的文件编码,默认为utf-8
 		
 		--version 显示版本信息
+
+
+> ***Tips : 关于--busy-ignore , 在处理一些耗时操作时, 添加这个参数将后续请求忽略有可能是必要的. 但是也可能造成一些必要的操作被忽略,所以使用时应当小心评估使用场景. 在未来会添加执行周期限制用于解决这个问题***
+
 
 ### 支持的替换标记 : {xxx}
 
@@ -106,5 +129,5 @@ The last thing, run the scrip by fsfb.
 	......
 	
 
-
+----------------
 
