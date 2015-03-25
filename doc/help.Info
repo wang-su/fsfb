@@ -1,0 +1,25 @@
+	Usage : fsfb [dirname] [options]
+	
+	dirname:  the path to a file or directory
+	
+	options :
+		--target - 将进行监视的目录名, 用于替代dirname. 
+		--busy-ignore - 当一次执行未完成时,忽略后续的执行请求.
+		--exec - 指定命令行模版, 当文件系统产生变化时, 将替换变量值后产生的一个完整的命令行指令并直接执行.
+		--exec-tpl-file - 从文件读取命令行模版, *考虑性能问题, 在启动监视后,不再读取tpl-file文件变化.
+		--charset - 指定tpl-file的文件编码,默认为utf-8
+		
+		--config - 指定载入一个配置文件. 文件中内容将替换默认内容及命令行参数.
+		--enable-log - 显示一些调式信息.大部份情况下没用.
+		--version - 显示版本信息
+	
+	support args : {xxx}
+		{type} - change type of the file system,
+			possible value: "modify", "newfile", "rmfile", "mkdir", "rmdir"
+		{fname} - filename,
+		{dirname} - relative path,
+		{fulldir} - full path(AP),
+		{fullname} - full path and file name.
+	
+	more info 
+		 $homeurl$

@@ -10,27 +10,14 @@ var fs =require('fs');
 var childPorcess = require('child_process');
 var exec = childPorcess.exec;
 //
-var Observer = require('./common/observer.js');
+var Observer = require('./lib/observer.js');
+var Helper = require('./lib/shell_argv_helper.js');
 var joinPath = Observer.joinPath;
 var args = process.argv;
 var currentDirname = process.cwd();
 var packageInfo = require("./package.json");
 
-
-// ignore node or npm and the script name;
-args = args.slice(2);
-
-//
 var dirname = null;
-
-if(args.length >= 2){
-    // 第一个参数不存在'='时,认为第一个参数为目录名
-    if(args[0].indexOf("=") == -1){
-        //取目标目录, 否则为单参数
-        dirname = args.shift();     
-    }
-}
-
 var enableLog = false;
 var charset = 'utf-8';
 var execTpl = '';
@@ -43,42 +30,45 @@ var working = false;
 var shellTpl = "echo {type}:{fullname}";
 
 // split command parameters
-var paramItem = null;
-var key,value;
 
-while(paramItem = args.pop()){
-    paramItem = paramItem.split('=');
-    
-    key = paramItem[0] || "";
-    value = paramItem[1];
+Helper.init();
+
+var params = Helper.getMap();
+
+var key,value;
+for(key in params.options){
     
     key = key.toLowerCase();
+    value = params.options[key];
     
     switch(key){
-        case '--target':
+        case 't':
+        case 'target':
             dirname = value || false;
             break;
-        case '--busy-ignore':
+        case 'ignore':
+        case 'config':
+        case 'busy-ignore':
             busyIgnore = true;
             break;
-        case '--enable-log':
+        case 'enable-log':
             // 启用log
             enableLog = true;
             break;
-        case '--charset':
+        case 'charset':
             charset = value || "utf-8";
-        case '--exec':
+            break;
+        case 'r':
+        case 'exec':
             // 直接替换执行的字符串
             execTpl = value;
             break;
-        case '--exec-tpl-file':
+        case 'exec-tpl-file':
             execTplFile = value; 
             break;
         case 'version':
-        case '--version':
             version();
             return process.exit();
-        case '--help':
         case 'help':
         default:
             help();
@@ -86,10 +76,14 @@ while(paramItem = args.pop()){
     }
 }
 
-if(!dirname){
-    help();
-    console.log('missing "dirname".\n');
-    process.exit();
+if (!dirname) {
+    if (params.contents) {
+        dirname = params.contents;
+    } else {
+        help();
+        console.log('missing "dirname".\n');
+        process.exit();
+    }
 }
 
 if(execTplFile){
@@ -115,7 +109,7 @@ if(execTplFile){
     
 }else{
     help();
-    console.log('required one of --exec or --exec-tpl-file !');
+    console.log('required one of [-r ,--exec , --exec-tpl-file]!');
 }
 
 
@@ -124,7 +118,7 @@ if(execTplFile){
  */
 function help () {
 
-    var info = '\nUsage : fsfb dirname|--target="dirname" [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]';
+    var info = '\nUsage : fsfb [dirname|--target="dirname"] [ --exec="commend Tpl" | --exec-tpl-file="file path" [ --charset=utf-8 ]] [ --enable-log ] [ --version | version ] [ --help | help ]';
     info += '\n\nParams :';
     info += '\n\tdirname - 将进行监视的目录名';
     info += '\n\t--enable-log - 显示一些调式信息.大部份情况下没用.';

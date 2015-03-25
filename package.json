@@ -2,7 +2,7 @@
   "name": "fsfb",
   "version": "0.0.7",
   "description": "file system feedback : watch files change and execute a command",
-  "main": "common/observer.js",
+  "main": "lib/observer.js",
   "bin": {
       "fsfb": "fsfb.js"
   },
